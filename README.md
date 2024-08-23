@@ -82,7 +82,6 @@ A real-time chat application using MongoDB, Express.js, React, and Node.js. Impl
 
 ## Usage
 - **Register** a new account or **log in** with an existing account.
-- **Login** an existing chat room or **create** a new one.
 - Start **chatting** in real-time with other users in the room.
 
 
