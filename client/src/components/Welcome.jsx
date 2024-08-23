@@ -7,7 +7,7 @@ const Welcome = () => {
 
     useEffect(()=>{
         async function fetchData(){
-            setUsername(await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)).username);
+            setUsername(await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY))?.username);
         }
         fetchData();
     },[]    )

@@ -23,6 +23,30 @@ A real-time chat application using MongoDB, Express.js, React, and Node.js. Impl
     git clone https://github.com/tusharmalankiya/TalkTime.git
     cd TalkTime
     ```
+
+#### Server Set Up:
+1. Install Dependencies:
+
+    ```bash
+    cd server
+    ```
+
+    ```bash
+    npm install
+    ```
+
+2. Configuration:
+
+    ```bash
+    mv .config .env
+    ```
+
+3. Running the Application
+
+    ```bash
+    node index.js
+    ```
+
 #### Client Set Up:
 1. Install Dependencies:
 
@@ -55,29 +79,6 @@ A real-time chat application using MongoDB, Express.js, React, and Node.js. Impl
     ```
 4. Open your web browser and navigate to http://localhost:3000 to access the application.
 
-
-#### Server Set Up:
-1. Install Dependencies:
-
-    ```bash
-    cd server
-    ```
-
-    ```bash
-    npm install
-    ```
-
-2. Configuration:
-
-    ```bash
-    mv .config .env
-    ```
-
-3. Running the Application
-
-    ```bash
-    node index.js
-    ```
 
 ## Usage
 - **Register** a new account or **log in** with an existing account.
