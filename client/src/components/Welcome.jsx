@@ -30,6 +30,8 @@ flex-direction: column;
 justify-content: center;
 align-items: center;
 color: #fff;
+width: 100%;
+height: 100%;
 
 img{
     height: 15rem;
@@ -41,5 +43,11 @@ h1{
 span{
     color: #7A1CAC;
 }
+
+@media only screen and (max-width: 768px){
+    display: none;
+    ${'' /* height: 100%; */}
+    ${'' /* display: none; */}
+    }
 
 `;

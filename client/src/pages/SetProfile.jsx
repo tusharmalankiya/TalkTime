@@ -103,7 +103,7 @@ const SetProfile = () => {
     <Container>
 
       <h1>Choose your profile avatar</h1>
-      <div>
+      <div className='avatars-imgs-container'>
         {profileImages.map((file, index) => {
           return (
             <img src={URL.createObjectURL(file)} key={index} alt={`Profile ${index}`} className={`set-avatar-img ${selectedImage === index && 'selected'}`} onClick={() => handleSelect(index)} />
@@ -121,19 +121,30 @@ export default SetProfile;
 
 
 const Container = styled.div`
-height: 100vh;
-width: 100vw;
+height: 100dvh;
+width: 100dvw;
 display: flex;
 flex-direction: column;
 gap: 3rem;
 justify-content: center;
 align-items: center;
 background-color: #17153B ;
-overflow: auto;
+overflow: hidden;
 color: #fff;
+padding: 1rem;
+
+& .avatars-imgs-container{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  ${'' /* gap: 2.5rem; */}
+  ${'' /* padding: 2.5rem; */}
+  justify-content: center;
+}
 
 & h1{
-  font-size: 35px;
+  ${'' /* margin-bottom: 2rem; */}
+  font-size: 2rem;
   text-transform: capitalize;
 }
 
@@ -142,7 +153,7 @@ color: #fff;
   height: 7rem;
   border-radius: 100%;
   background: #F8EDED;
-  margin: 0 1rem;
+  margin: 1.5rem;
   cursor: pointer;
 }
 
@@ -166,6 +177,28 @@ color: #fff;
   &:hover{
     opacity: 0.8;
   }
+}
+
+
+@media only screen and (max-width: 768px){
+  & h1{
+  font-size: 23px;
+  text-transform: capitalize;
+}
+
+& .set-avatar-img{
+  height: 6rem;
+  border-radius: 100%;
+  background: #F8EDED;
+  ${'' /* margin: 0 1rem; */}
+  cursor: pointer;
+}
+
+.set-avatar-btn{
+  font-size: 15px;
+  padding: 1rem 3rem;
+}
+
 }
 
 `;

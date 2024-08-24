@@ -7,37 +7,36 @@ import { Link } from 'react-router-dom';
 
 
 
-const Chats = ({chats, changeChat, currentUser}) => {
+const Chats = ({ chats, isMsgsOpened, setIsMsgsOpened, changeChat, currentUser }) => {
     const [currentSelected, setCurrentSelected] = useState(undefined);
 
-    console.log(chats);
-    const handleCurrentChat = (chat) =>{
+    const handleCurrentChat = (chat) => {
         setCurrentSelected(chat);
         changeChat(chat);
-        // console.log(chat._id);
+        setIsMsgsOpened(!isMsgsOpened);
     }
-    
+
     return (
         <>
-            <Container>
+            <Container $isOpened={!isMsgsOpened}>
                 <div className='current-user'>
                     <div className='current-user-profile'>
                         <Link to='/set-profile'>
-                        <img src={`${host}/${currentUser?.avatar}`} alt="profile-image" />
+                            <img src={`${host}/${currentUser?.avatar}`} alt="profile-image" />
                         </Link>
                         <h1>{currentUser?.username}</h1>
                     </div>
-                   <Logout currentUser={currentUser} />
+                    <Logout currentUser={currentUser} />
                 </div>
                 <div className='chats-container'>
-                {chats.map((chat, index)=>{
-                
-                  return ( <div className={`chat ${currentSelected?._id === chat._id && "selected"}`} key={index} onClick={()=>handleCurrentChat(chat)} >
-                        <img src={`${host}/${chat.avatar }`} alt="user-profile-image" />
-                        <h3>{chat.username}</h3>
-                    </div>)
-                })}
-                    
+                    {chats.map((chat, index) => {
+
+                        return (<div className={`chat ${currentSelected?._id === chat._id && "selected"}`} key={index} onClick={() => handleCurrentChat(chat)} >
+                            <img src={`${host}/${chat.avatar}`} alt="user-profile-image" />
+                            <h3>{chat.username}</h3>
+                        </div>)
+                    })}
+
                 </div>
                 <div className='logo-container'>
                     <img src={logo} alt="logo" />
@@ -56,6 +55,9 @@ display: grid;
 grid-template-rows: 15% 75% 10%;
 overflow: hidden;
 color: #fff;
+height: 100%;
+width: 100%;
+max-width: 400px;
 
 .current-user{
     display: flex;
@@ -141,5 +143,17 @@ color: #fff;
 
 }
 
+@media only screen and (max-width: 768px){
+    display: ${props => (props.$isOpened ? 'grid' : 'none')};
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    ${'' /* display: initial; */}
+    .chats-container{
+    .selected{
+        background-color: #0300b763;
+    }
+    }
+    }
 
 `;

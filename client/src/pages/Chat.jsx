@@ -15,6 +15,8 @@ const Chat = () => {
   const [currentUser, setCurrentUser] = useState(undefined);
   const [chats, setChats] = useState([]);
 
+  const [isMsgsOpened, setIsMsgsOpened] = useState(false);
+
   useEffect(() => {
     async function fetchData() {
       if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
@@ -49,10 +51,8 @@ const Chat = () => {
 
   useEffect(()=>{
       if(currentUser){
-      // console.log(currentUser);
         axios.get(`${allChatsAPI}/${currentUser._id}`)
         .then(res =>{
-          // console.log(res.data);
           if(res.data.status === true){
             setChats(res.data.usersData);
           }
@@ -60,24 +60,21 @@ const Chat = () => {
           console.log(err);
         })
       }
-    // }catch(err){
-    //   console.log(err);
-    // }
   }, [currentUser])
 
   const handleChatChange = (chat) =>{
     setCurrentChat(chat);
-    // console.log(chat);
   }
 
   return (
     <>
       <Container>
         <div className='chat-container'>
-          <Chats chats={chats} changeChat={handleChatChange} currentUser={currentUser} />
-          {currentChat === undefined ?
+          <Chats chats={chats} isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} changeChat={handleChatChange} currentUser={currentUser} />
+          {(currentChat === undefined) ?
             <Welcome /> :
-            <Messages currentChat={currentChat} socket={socket} />}
+            <Messages isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} currentChat={currentChat} socket={socket} />}
+            
         </div>
       </Container>
     </>
@@ -87,7 +84,7 @@ const Chat = () => {
 export default Chat;
 
 const Container = styled.div`
-height: 100vh;
+height: 100dvh;
 width: 100vw;
 display: flex;
 flex-direction: column;
@@ -95,21 +92,26 @@ justify-content: center;
 align-items: center;
 background-color: #17153B;
 
+
 .chat-container{
   width: 85vw;
   height: 85vh;
   display: grid;
-  background: white;
   grid-template-columns: 25% 75%;
+
+  display: flex;
+  flex-direction: row;
 }
 
 @media only screen and (max-width: 768px){
-      ${'' /* .chat-container{
+      ${'' /* height: 100dvh; */}
+      .chat-container{
+        display: block;
         width: 100%;
         height: 100%;
-        display: block;
+        ${'' /* display: block; */}
 
-      } */}
+      }
     }
 
 `;

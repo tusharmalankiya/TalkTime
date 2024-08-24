@@ -35,7 +35,7 @@ export default ChatInput
 
 const Container = styled.div`
 background-color: #080705;
-padding: 0 2rem;
+padding: 0 1rem;
 display: flex;
 justify-content: center;
 align-items: center;

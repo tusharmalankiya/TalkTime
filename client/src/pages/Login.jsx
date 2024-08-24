@@ -7,9 +7,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import { loginAPI } from '../utils/APIs';
 import axios from 'axios';
 import { toastConfig } from '../utils/toast';
+import Loader from '../components/Loader';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     username: "",
     password: ""
@@ -47,6 +49,7 @@ const Login = () => {
     if(!handleValidation()){
       return;
     }
+    setLoading(true);
 
     console.log(data);
     const { username, password } = data;
@@ -55,6 +58,7 @@ const Login = () => {
       const res = await axios.post(loginAPI, { username, password });
       console.log(res.data);
       if (res.data.status === true) {
+        setLoading(false);
         toast("Logged In Successfully", toastConfig);
         localStorage.setItem(
           process.env.REACT_APP_LOCALHOST_KEY,
@@ -62,18 +66,22 @@ const Login = () => {
         );
         navigate("/");
       } else {
+        setLoading(false);
         toast.error(res.data.message, toastConfig);
+        console.log(res.data);
       }
 
     } catch (err) {
+      setLoading(false);
       toast.error(err.message, toastConfig);
       console.log(err);
     }
   }
-
+  // if (loading) return <Container><Loader /></Container>;
   return (
     <>
       <Container>
+      {loading ? <Loader /> : 
         <form action="" onSubmit={(event) => handleSubmit(event)}>
           <div className="header">
             <img src={logo} alt="logo" />
@@ -99,6 +107,7 @@ const Login = () => {
             Don't have an account ? <Link to="/register">Sign Up</Link>
           </span>
         </form>
+      }
       </Container>
       <ToastContainer />
     </>
@@ -108,13 +117,14 @@ const Login = () => {
 export default Login;
 
 const Container = styled.div`
-height: 100vh;
-width: 100vw;
+height: 100dvh;
+width: 100dvw;
 display: flex;
 flex-direction: column;
 justify-content: center;
 align-items: center;
 background-color: #17153B ;
+padding: 1rem;
 
 form{
   display: flex;
@@ -125,6 +135,8 @@ form{
   background-color: #080705;
   padding: 3rem 5rem;
   border-radius: 2rem;
+  width: 100%;
+  max-width: 500px;
 }
 
 .header{

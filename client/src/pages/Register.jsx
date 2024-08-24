@@ -7,9 +7,11 @@ import { registerAPI } from '../utils/APIs';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { toastConfig } from '../utils/toast';
+import Loader from '../components/Loader';
 
 const Register = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [data, setData] = useState({
     username: "",
@@ -18,7 +20,6 @@ const Register = () => {
     confirmPassword:""
   })
 
-  // localStorage.setItem(process.env.REACT_APP_LOCALHOST_KEY, false);
   useEffect(() => {
     if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
       navigate("/");
@@ -59,6 +60,7 @@ const Register = () => {
     if(!handleValidation()){
       return;
     }
+    setLoading(true);
 
     const {username, email, password} = data;
     try{
@@ -72,18 +74,23 @@ const Register = () => {
         );
         navigate("/");
       }else{
+        setLoading(false);
         toast(res.data.message);
       }
-
+      
     }catch(err){
+      setLoading(false);
       toast.error(err.message, toastConfig);
       console.log(err);
     }
   }
 
+  // if (loading) return <Container><Loader /></Container>;
+
   return (
     <>
       <Container>
+      {loading ? <Loader /> : 
         <form action="" onSubmit={(event) => handleSubmit(event)} autoComplete='off'>
           <div className="header">
             <img src={logo} alt="logo" />
@@ -122,7 +129,7 @@ const Register = () => {
           <span>
             Already have an account ? <Link to="/login">Login</Link>
           </span>
-        </form>
+        </form>}
       </Container>
       <ToastContainer />
     </>
@@ -133,13 +140,14 @@ export default Register;
 
 
 const Container = styled.div`
-height: 100vh;
+height: 100dvh;
 width: 100vw;
 display: flex;
 flex-direction: column;
 justify-content: center;
 align-items: center;
 background-color: #17153B ;
+padding: 1rem;
 
 form{
   display: flex;
@@ -148,6 +156,8 @@ form{
   background-color: #080705;
   padding: 3rem 5rem;
   border-radius: 2rem;
+  width: 100%;
+  max-width: 500px;
 }
 
 .header{

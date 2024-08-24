@@ -16,7 +16,7 @@ const Container = styled.div`
 display: flex;
 justify-content: center;
 align-items: center;
-background-color:  #021526;
+background-color:  transparent;
 width: 100%;
 height: 100%;
 

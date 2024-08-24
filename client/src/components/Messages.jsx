@@ -4,8 +4,10 @@ import ChatInput from './ChatInput';
 import axios from 'axios';
 import { getMessagesAPI, host, saveMessagesAPI } from '../utils/APIs';
 import Loader from './Loader';
+import { IoMdArrowRoundBack } from "react-icons/io";
 
-const Messages = ({ currentChat, socket }) => {
+
+const Messages = ({ currentChat, isMsgsOpened, setIsMsgsOpened, socket }) => {
     const lastMsg = useRef();
     const [loading, setLoading] = useState(true);
     const [currentUser, setCurrentUser] = useState(undefined);
@@ -21,7 +23,7 @@ const Messages = ({ currentChat, socket }) => {
 
     // Get Messages
     useEffect(() => {
-        if(!loading){
+        if (!loading) {
             setLoading(true);
         }
 
@@ -30,7 +32,6 @@ const Messages = ({ currentChat, socket }) => {
                 from: currentUser._id,
                 to: currentChat._id
             }).then((res) => {
-                // console.log(res.data);
                 setLoading(false);
                 if (res.data.status === true) {
                     setMessages(res.data.messages);
@@ -41,9 +42,9 @@ const Messages = ({ currentChat, socket }) => {
                 console.log(err);
             })
         }
-        
 
-        return () =>{
+
+        return () => {
             setMessages([]);
         }
 
@@ -81,10 +82,14 @@ const Messages = ({ currentChat, socket }) => {
     }, [messages])
 
     return (
-        <Container>
+        <Container $isOpened={isMsgsOpened}>
             <div className='messages-header'>
-                <img src={`${host}/${currentChat.avatar}`} alt="user-profile" />
-                <h3>{currentChat?.username}</h3>
+                <div className='messages-header-container'>
+                    <img src={`${host}/${currentChat.avatar}`} alt="user-profile" />
+                    <h3>{currentChat?.username}</h3>
+                </div>
+                <button className='messages-back-btn' onClick={()=>setIsMsgsOpened(!isMsgsOpened)}><IoMdArrowRoundBack />
+</button>
             </div>
             <div className='messages-body'>
                 {loading && <Loader />}
@@ -94,8 +99,6 @@ const Messages = ({ currentChat, socket }) => {
                         <div className="message">{data.message}</div>
                     </div>)
                 })}
-
-
             </div>
             <ChatInput sendMessage={sendMessage} />
         </Container>
@@ -109,16 +112,23 @@ background-color: #021526;
 color: #fff;
 display: grid;
 grid-template-rows: 10% 80% 10%;
+
 overflow: hidden;
-
-
+height: 100%;
+width: 100%;
 
 .messages-header{
-display: flex;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+.messages-header-container{
+display: flex; 
 height: 100%;
 align-items: center;
 gap: 1rem;
-padding: 1rem;
 
     img{
         height: 3rem;
@@ -129,9 +139,12 @@ padding: 1rem;
     }
 }
 
+.messages-back-btn{
+    display: none;
+}
 
 .messages-body{
-    padding: 1rem 2rem;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
     overflow: auto;
@@ -174,5 +187,22 @@ padding: 1rem;
             background-color: #201E43;
         }
     }
+}
+
+@media only screen and (max-width: 768px){
+    display: ${(props) => (props.$isOpened ? 'grid' : 'none')};
+    
+    .messages-back-btn{
+    display: block;
+    padding: 0 2.5rem;
+    border-radius: 2rem;
+    border: none;
+    background: #55679C;
+
+    svg{
+        font-size: 25px;
+        color: #fff;
+    }
+}
 }
 `;
