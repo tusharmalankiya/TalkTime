@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { setProfileAPI } from '../utils/APIs';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import { toastConfig } from '../utils/toast';
+import Loader from '../components/Loader';
 
 const SetProfile = () => {
   const navigate = useNavigate();
@@ -39,7 +42,6 @@ const SetProfile = () => {
 
   const handleSelect = (index) => {
     setSelectedImage(index);
-    console.log(index);
   }
 
   const handleAvatar = async (e) => {
@@ -57,7 +59,6 @@ const SetProfile = () => {
         setLoading(false);
         if (res.data.status === true) {
           currentUser.avatar = res.data.avatar;
-          console.log(res.data);
           localStorage.setItem(
             process.env.REACT_APP_LOCALHOST_KEY,
             JSON.stringify(currentUser)
@@ -67,8 +68,10 @@ const SetProfile = () => {
         }
       } catch (err) {
         console.log(err);
+        toast.error(err.message, toastConfig);
       }
     } else {
+      toast.error("Please select Avatar", toastConfig);
       console.log("no image selected");
     }
   }
@@ -83,6 +86,7 @@ const SetProfile = () => {
           data.push(file);
         } catch (err) {
           console.log(err);
+          toast.error(err.message, toastConfig);
         }
       }
       setProfileImages(data);
@@ -93,7 +97,7 @@ const SetProfile = () => {
   }, [])
 
 
-  if (loading) return <Container>Loading..</Container>;
+  if (loading) return <Container><Loader /></Container>;
 
   return (
     <Container>
@@ -102,13 +106,13 @@ const SetProfile = () => {
       <div>
         {profileImages.map((file, index) => {
           return (
-            <img src={URL.createObjectURL(file)} key={index} alt={`Profile ${index}`} className={`${selectedImage === index && 'selected'}`} onClick={() => handleSelect(index)} />
+            <img src={URL.createObjectURL(file)} key={index} alt={`Profile ${index}`} className={`set-avatar-img ${selectedImage === index && 'selected'}`} onClick={() => handleSelect(index)} />
           )
         })}
       </div>
-      <button onClick={handleAvatar}>Set as a profile picture</button>
+      <button className='set-avatar-btn' onClick={handleAvatar}>Set as a profile picture</button>
 
-
+      <ToastContainer />
     </Container>
   )
 }
@@ -128,13 +132,13 @@ background-color: #17153B ;
 overflow: auto;
 color: #fff;
 
-h1{
+& h1{
   font-size: 35px;
   text-transform: capitalize;
 }
 
 
-img{
+& .set-avatar-img{
   height: 7rem;
   border-radius: 100%;
   background: #F8EDED;
@@ -147,7 +151,7 @@ img{
   opacity: 0.7;
 }
 
-button{
+.set-avatar-btn{
   box-sizing: content-box;
   padding: 1rem 6rem;
   font-size: 20px;

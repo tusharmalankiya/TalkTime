@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { loginAPI } from '../utils/APIs';
 import axios from 'axios';
+import { toastConfig } from '../utils/toast';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,13 +15,6 @@ const Login = () => {
     password: ""
   })
 
-  const toastOptions = {
-    position: "bottom-right",
-    autoClose: 8000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: "dark",
-  }
   useEffect(() => {
     if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
       navigate("/");
@@ -31,8 +25,29 @@ const Login = () => {
     setData({ ...data, [e.target.name]: e.target.value });
 
   }
+
+  const handleValidation = () =>{
+   
+    if(data.username === ""){
+      toast.error("Username is required", toastConfig);
+      return false;
+    }
+    
+    if(data.password === ""){
+      toast.error("Password is required", toastConfig);
+      return false;
+    }
+
+    return true;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if(!handleValidation()){
+      return;
+    }
+
     console.log(data);
     const { username, password } = data;
     try {
@@ -40,17 +55,18 @@ const Login = () => {
       const res = await axios.post(loginAPI, { username, password });
       console.log(res.data);
       if (res.data.status === true) {
-        toast("Logged In Successfully", toastOptions);
+        toast("Logged In Successfully", toastConfig);
         localStorage.setItem(
           process.env.REACT_APP_LOCALHOST_KEY,
           JSON.stringify(res.data.userData)
         );
         navigate("/");
       } else {
-        toast(res.data.message, toastOptions);
+        toast.error(res.data.message, toastConfig);
       }
 
     } catch (err) {
+      toast.error(err.message, toastConfig);
       console.log(err);
     }
   }

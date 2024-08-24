@@ -6,6 +6,7 @@ import axios from 'axios';
 import { registerAPI } from '../utils/APIs';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { toastConfig } from '../utils/toast';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -24,13 +25,41 @@ const Register = () => {
     }
   }, []);
 
+  const handleValidation = () =>{
+    if(data.username.length < 4){
+      toast.error("Username should be at least 4 characters long", toastConfig);
+      return false;
+    }
+
+    if(data.email === ""){
+      toast.error("Please enter an email", toastConfig);
+      return false;
+    }
+    
+    if(data.password !== data.confirmPassword){
+      toast.error("Password doesn't match", toastConfig);
+      return false;
+    }
+
+    if(data.password.length < 8){
+      toast.error("Password should be at least 8 characters long", toastConfig);
+      return false;
+    }
+
+    return true;
+  }
+
   const handleChange = (e) => {
     setData({...data, [e.target.name]:e.target.value});
-    // setData()
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if(!handleValidation()){
+      return;
+    }
+
     const {username, email, password} = data;
     try{
       
@@ -47,6 +76,7 @@ const Register = () => {
       }
 
     }catch(err){
+      toast.error(err.message, toastConfig);
       console.log(err);
     }
   }
