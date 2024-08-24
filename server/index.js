@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
-// const path = require("path");
+const path = require("path");
 // const server = require('http').createServer();
 // const { Server } = require("socket.io");
 const http = require('http');
@@ -44,6 +44,9 @@ if (process.env.NODE_ENV === "development") {
 
 // express middleware handling the body parsing
 app.use(express.json());
+
+// Make 'assets' folder publicly accessible
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // app.use("/assets", express.static("public"));
 app.use(cookieParser());

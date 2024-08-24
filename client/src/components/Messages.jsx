@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components';
 import ChatInput from './ChatInput';
 import axios from 'axios';
-import { getMessagesAPI, saveMessagesAPI } from '../utils/APIs';
+import { getMessagesAPI, host, saveMessagesAPI } from '../utils/APIs';
 
 const Messages = ({ currentChat, socket }) => {
     const lastMsg = useRef();
@@ -16,7 +16,7 @@ const Messages = ({ currentChat, socket }) => {
         }
         fetchData();
     }, [])
-    
+
     // Get Messages
     useEffect(() => {
         if (currentUser) {
@@ -25,9 +25,9 @@ const Messages = ({ currentChat, socket }) => {
                 to: currentChat._id
             }).then((res) => {
                 // console.log(res.data);
-                if(res.data.status === true){
+                if (res.data.status === true) {
                     setMessages(res.data.messages);
-                }else{
+                } else {
                     console.log("Messages didn't retrive.");
                 }
             }).catch(err => {
@@ -70,12 +70,12 @@ const Messages = ({ currentChat, socket }) => {
     return (
         <Container>
             <div className='messages-header'>
-                <img src="https://avatar.iran.liara.run/public" alt="user-profile" />
+                <img src={`${host}/${currentChat.avatar}`} alt="user-profile" />
                 <h3>{currentChat?.username}</h3>
             </div>
             <div className='messages-body'>
                 {messages?.map((data, index) => {
-                    {/* console.log(data); */}
+                    {/* console.log(data); */ }
                     return (<div ref={lastMsg} key={index} className={`message-container ${data.from === currentUser?._id ? 'outgoing' : 'incomming'}`}>
                         <div className="message">{data.message}</div>
                     </div>)
@@ -105,9 +105,14 @@ height: 100%;
 align-items: center;
 gap: 1rem;
 padding: 1rem;
-img{
-    height: 3rem;
-}
+
+    img{
+        height: 3rem;
+        width: 3rem;
+        border-radius: 10rem;
+        background: #F8EDED;
+        ${'' /* object-fit: cover; */}
+    }
 }
 
 

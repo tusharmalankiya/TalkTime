@@ -27,6 +27,11 @@ const userSchema = new mongoose.Schema(
             validate: [isEmail, "please enter a valid email address"],
         },
 
+        avatar: {
+            type: String,
+            default: null
+        },
+
         socket: {
             type: String,
             default: null

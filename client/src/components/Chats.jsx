@@ -2,12 +2,15 @@ import React, { useState } from 'react'
 import styled from 'styled-components';
 import logo from "./../assets/logo.png";
 import Logout from './Logout';
+import { host } from '../utils/APIs';
+import { Link } from 'react-router-dom';
 
 
 
 const Chats = ({chats, changeChat, currentUser}) => {
     const [currentSelected, setCurrentSelected] = useState(undefined);
 
+    console.log(chats);
     const handleCurrentChat = (chat) =>{
         setCurrentSelected(chat);
         changeChat(chat);
@@ -19,7 +22,9 @@ const Chats = ({chats, changeChat, currentUser}) => {
             <Container>
                 <div className='current-user'>
                     <div className='current-user-profile'>
-                        <img src="https://avatar.iran.liara.run/public" alt="profile-image" />
+                        <Link to='/set-profile'>
+                        <img src={`${host}/${currentUser?.avatar}`} alt="profile-image" />
+                        </Link>
                         <h1>{currentUser?.username}</h1>
                     </div>
                    <Logout currentUser={currentUser} />
@@ -28,7 +33,7 @@ const Chats = ({chats, changeChat, currentUser}) => {
                 {chats.map((chat, index)=>{
                 
                   return ( <div className={`chat ${currentSelected?._id === chat._id && "selected"}`} key={index} onClick={()=>handleCurrentChat(chat)} >
-                        <img src="https://avatar.iran.liara.run/public" alt="user-profile-image" />
+                        <img src={`${host}/${chat.avatar }`} alt="user-profile-image" />
                         <h3>{chat.username}</h3>
                     </div>)
                 })}
@@ -67,6 +72,12 @@ color: #fff;
 
    img{
     height: 5rem;
+    width: 5rem;
+    border-radius: 10rem;
+    background: #F8EDED;
+   }
+   h1{
+    font-size: 25px;
    }
     }
 }
@@ -99,6 +110,15 @@ color: #fff;
 
         img{
             height: 3rem;
+            width: 3rem;
+            border-radius: 10rem;
+            background: #F8EDED;
+            ${'' /* object-fit: cover; */}
+        }
+
+        h3{
+            font-weight: 400;
+            font-size: 20px;
         }
     }
 

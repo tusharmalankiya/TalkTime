@@ -28,6 +28,13 @@ const Chat = () => {
     fetchData();
   }, []);
 
+  useEffect(()=>{
+    if(currentUser && !currentUser.avatar){
+      console.log("no avatar");
+      navigate('/set-profile');
+    }
+  },[currentUser])
+
 
   useEffect(()=>{
     if(currentUser){

@@ -1,11 +1,21 @@
 const User = require("./../models/User");
 const Message = require("./../models/Message");
+const fs = require('fs').promises;
+
+async function deleteFile(path) {
+    try {
+        await fs.unlink(path);
+        console.log(`File ${path} deleted successfully`);
+    } catch (err) {
+        console.error('Error deleting file:', err);
+    }
+}
 
 module.exports.get_chats = async (req, res) => {
     // console.log(req.params);
-    const users = await User.find({_id: {$ne: req.params.id}});
+    const users = await User.find({ _id: { $ne: req.params.id } }).sort({ username: 1 });
     usersData = [];
-    users.forEach((user)=>{
+    users.forEach((user) => {
         // console.log(user);
         userData = user.toObject();
         delete userData.password;
@@ -15,32 +25,56 @@ module.exports.get_chats = async (req, res) => {
     res.status(200).json({ status: true, usersData });
 }
 
-module.exports.save_messages = async (req, res) =>{
-// console.log(req.body);
-const {from, to, message} = req.body;
-try{
-    await Message.create({from, to, message});
-    // console.log(msg);
-    return res.json({status: true, message:"Message added to the database successfully."});
-}catch (err){
-    console.log(err);
-    return res.json({status: false, message:"Message failed to be added in database."});
-}
+module.exports.save_messages = async (req, res) => {
+    // console.log(req.body);
+    const { from, to, message } = req.body;
+    try {
+        await Message.create({ from, to, message });
+        // console.log(msg);
+        return res.json({ status: true, message: "Message added to the database successfully." });
+    } catch (err) {
+        console.log(err);
+        return res.json({ status: false, message: "Message failed to be added in database." });
+    }
 }
 
-module.exports.get_messages = async (req, res) =>{
+module.exports.get_messages = async (req, res) => {
     console.log(req.body);
-    const {from, to} = req.body;
-    try{
+    const { from, to } = req.body;
+    try {
         const msgs = await Message.find({
-            $or:[
-                {from: from, to: to},
-                {from: to, to: from}
+            $or: [
+                { from: from, to: to },
+                { from: to, to: from }
             ]
-        }).sort({updatedAt: 1});
+        }).sort({ updatedAt: 1 });
         // console.log(msgs);
-        res.json({status: true, messages: msgs});
-    }catch(err){
+        res.json({ status: true, messages: msgs });
+    } catch (err) {
         console.log(err);
+    }
+}
+
+module.exports.set_profile = async (req, res) => {
+    if (req.file) {
+        const userId = req.body.userId;
+        const avatar = req.file.path;
+
+        try {
+
+            const user = await User.findByIdAndUpdate(userId, { avatar });
+            // const userData = user.toObject();
+            // delete userData.password;
+            if (user.avatar) {
+                deleteFile(user.avatar);
+            }
+
+            console.log(user);
+            res.json({ status: true, avatar, message: "profile set up sucessfully" });
+        } catch (err) {
+            console.log(err);
+            res.json({ status: false, message: "profile set up failed" });
+        }
+
     }
 }
