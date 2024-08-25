@@ -19,10 +19,11 @@ A real-time chat application using MongoDB, Express.js, React, and Node.js. Impl
 ### Steps
 
 #### Clone the repository:
-    ```bash
-    git clone https://github.com/tusharmalankiya/TalkTime.git
-    cd TalkTime
-    ```
+
+```bash
+git clone https://github.com/tusharmalankiya/TalkTime.git
+cd TalkTime
+```
 
 #### Server Set Up:
 1. Install Dependencies:
