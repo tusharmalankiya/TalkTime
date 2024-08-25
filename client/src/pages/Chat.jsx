@@ -60,7 +60,7 @@ const Chat = () => {
           console.log(err);
         })
       }
-  }, [currentUser])
+  }, [currentUser, currentChat])
 
   const handleChatChange = (chat) =>{
     setCurrentChat(chat);
