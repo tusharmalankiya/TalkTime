@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { logoutAPI } from '../utils/APIs';
 
-const Logout = ({ currentUser }) => {
+const Logout = ({ socket, currentUser }) => {
   const navigate = useNavigate();
 
 
@@ -13,6 +13,7 @@ const Logout = ({ currentUser }) => {
     try {
       const res = await axios.get(`${logoutAPI}/${currentUser?._id}`);
       console.log(res);
+      socket.current.emit("logout");
       localStorage.clear();
       navigate('/login');
     } catch (err) {

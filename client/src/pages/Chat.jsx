@@ -43,7 +43,11 @@ const Chat = () => {
       socket.current = io(host);
       socket.current.on("connect", ()=>{
         console.log(socket.current.id);
-      })
+      });
+
+      // socket.current.on("new-user-connected", (user)=>{
+      //   setChats([...chats, user]);
+      // })
 
       socket.current.emit("new-user", currentUser._id);
     }
@@ -70,7 +74,7 @@ const Chat = () => {
     <>
       <Container>
         <div className='chat-container'>
-          <Chats chats={chats} isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} changeChat={handleChatChange} currentUser={currentUser} />
+          <Chats socket={socket} chats={chats} isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} changeChat={handleChatChange} currentUser={currentUser} />
           {(currentChat === undefined) ?
             <Welcome /> :
             <Messages isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} currentChat={currentChat} socket={socket} />}

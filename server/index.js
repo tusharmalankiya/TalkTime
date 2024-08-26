@@ -19,14 +19,17 @@ const authRoutes = require("./routes/authRoutes");
 require("dotenv").config();
 
 app = express();
-const server = http.createServer(app);
-const io = new Server(server, {
+const httpServer = http.createServer(app);
+
+// cors for socket.io 
+const io = new Server(httpServer, {
   cors: {
     origin: process.env.BASE_URL, // Allow connections from this origin
     methods: ["GET", "POST"], // Allow these HTTP methods
     credentials: true // Allow credentials (cookies, etc.)
   }
 });
+
 
 //***************************middlewares******************* */
 //CORS middleware
@@ -72,7 +75,7 @@ app.get("*", (req, res)=>{
 mongoose
   .connect(process.env.MONGO_URI)
   .then((result) => {
-     server.listen(process.env.PORT,"0.0.0.0", () => {
+     httpServer.listen(process.env.PORT,"0.0.0.0", () => {
       console.log(
         `connected to database and listening on port ${process.env.PORT}`
       );
@@ -99,4 +102,15 @@ io.on("connection", (socket)=>{
     }
   })
 
+  socket.on("logout", ()=>{
+    console.log("Logout requested", socket.id);
+    socket.disconnect();
+  })
+
+  // handle disconnect
+  socket.on("disconnect", ()=>{
+    console.log("User disconnected", socket.id);
+  })
+
 })
+  

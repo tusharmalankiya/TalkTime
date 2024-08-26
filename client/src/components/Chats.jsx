@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 
 
-const Chats = ({ chats, isMsgsOpened, setIsMsgsOpened, changeChat, currentUser }) => {
+const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, changeChat, currentUser }) => {
     const [currentSelected, setCurrentSelected] = useState(undefined);
 
     const handleCurrentChat = (chat) => {
@@ -26,7 +26,7 @@ const Chats = ({ chats, isMsgsOpened, setIsMsgsOpened, changeChat, currentUser }
                         </Link>
                         <h1>{currentUser?.username}</h1>
                     </div>
-                    <Logout currentUser={currentUser} />
+                    <Logout socket={socket} currentUser={currentUser} />
                 </div>
                 <div className='chats-container'>
                     {chats.map((chat, index) => {
