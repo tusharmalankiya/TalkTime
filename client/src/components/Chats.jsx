@@ -2,13 +2,17 @@ import React, { useState } from 'react'
 import styled from 'styled-components';
 import logo from "./../assets/logo.png";
 import Logout from './Logout';
-import { host } from '../utils/APIs';
-import { Link } from 'react-router-dom';
+import { host, logoutAPI } from '../utils/APIs';
+import { Link, useNavigate } from 'react-router-dom';
+import { BsThreeDotsVertical } from "react-icons/bs";
+import axios from 'axios';
 
 
 
 const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, changeChat, currentUser }) => {
     const [currentSelected, setCurrentSelected] = useState(undefined);
+    const [menuOpened, setMenuOpened] = useState(false);
+
 
     const handleCurrentChat = (chat) => {
         setCurrentSelected(chat);
@@ -16,19 +20,26 @@ const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, changeChat, curre
         setIsMsgsOpened(!isMsgsOpened);
     }
 
+    const handleMenu = () =>{
+        console.log("Menu");
+        console.log(menuOpened);
+        setMenuOpened(!menuOpened);
+      }
+
     return (
         <>
             <Container $isOpened={!isMsgsOpened}>
-                <div className='current-user'>
-                    <div className='current-user-profile'>
-                        <Link to='/set-profile'>
-                            <img src={`${host}/${currentUser?.avatar}`} alt="profile-image" />
-                        </Link>
-                        <h1>{currentUser?.username}</h1>
+                <Menu currentUser={currentUser} socket={socket} menuOpened={menuOpened} handleMenu={handleMenu} />
+                <div className='chats-header'>
+                    <div className='logo-container'>
+                        <img src={logo} alt="logo" />
+                        <h3>TalkTime</h3>
                     </div>
-                    <Logout socket={socket} currentUser={currentUser} />
+                    <MenuIconContainer onClick={handleMenu}>
+                        <BsThreeDotsVertical />
+                    </MenuIconContainer>
                 </div>
-                <div className='chats-container'>
+                <div className='all-chats-container'>
                     {chats.map((chat, index) => {
 
                         return (<div className={`chat ${currentSelected?._id === chat._id && "selected"}`} key={index} onClick={() => handleCurrentChat(chat)} >
@@ -38,9 +49,15 @@ const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, changeChat, curre
                     })}
 
                 </div>
-                <div className='logo-container'>
-                    <img src={logo} alt="logo" />
-                    <h3>TalkTime</h3></div>
+                <div className='current-user'>
+                    <div className='current-user-profile'>
+                        <Link to='/set-profile'>
+                            <img src={`${host}/${currentUser?.avatar}`} alt="profile-image" />
+                        </Link>
+                        <h1>{currentUser?.username}</h1>
+                    </div>
+                    <Logout socket={socket} currentUser={currentUser} />
+                </div>
             </Container>
         </>
     )
@@ -52,15 +69,37 @@ const Container = styled.div`
 height: 85vh;
 background-color: #080705;
 display: grid;
-grid-template-rows: 15% 75% 10%;
+grid-template-rows: 11% 89%;
 overflow: hidden;
 color: #fff;
 height: 100%;
 width: 100%;
 max-width: 400px;
+padding-bottom: 1rem;
+position: relative;
+
+& .chats-header{
+    display: flex;
+    align-items: center;
+    background-color: #1E201E;
+    padding: 0 1rem;
+    justify-content: space-between;
+
+
+.logo-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:1rem;
+
+    img{
+        height:2rem;
+    }
+}
+}
 
 .current-user{
-    display: flex;
+    display: none;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
@@ -84,11 +123,11 @@ max-width: 400px;
     }
 }
 
-.chats-container{
+.all-chats-container{
+    ${'' /* position: relative; */}
     overflow-x: hidden; 
     height: 100%;
     cursor: pointer;
-
         /* width */
     &::-webkit-scrollbar {
     width: 5px;
@@ -130,18 +169,6 @@ max-width: 400px;
 
 }
 
-.logo-container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap:1rem;
-    background-color: #1E201E;
-
-    img{
-        height:2rem;
-    }
-
-}
 
 @media only screen and (max-width: 768px){
     display: ${props => (props.$isOpened ? 'grid' : 'none')};
@@ -149,11 +176,96 @@ max-width: 400px;
     height: 100%;
     max-width: none;
     ${'' /* display: initial; */}
-    .chats-container{
+    .all-chats-container{
     .selected{
         background-color: #0300b763;
     }
     }
     }
+
+`;
+
+
+const MenuIconContainer = styled.div`
+${'' /* background: red; */}
+padding: 5px 0;
+padding-left: 1rem;
+cursor: pointer;
+position: relative;
+
+svg{
+    font-size: 30px;
+}
+`;
+
+const Menu = ({currentUser, socket, menuOpened}) =>{
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        console.log("logout");
+        try {
+          const res = await axios.get(`${logoutAPI}/${currentUser?._id}`);
+          console.log(res);
+          socket.current.emit("logout");
+          localStorage.clear();
+          navigate('/login');
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+ 
+
+    return (
+        <>
+            <MenuContainer $menuOpened={menuOpened}>
+            {console.log(menuOpened)}
+            <Link to="/set-profile">
+                <div className='menu-item'>
+                    Profile
+                </div>
+            </Link>
+                <div className='menu-item'>
+                    Create Chat Room
+                </div>
+                <div className='menu-item' onClick={handleLogout}>
+                    Logout
+                </div>
+            </MenuContainer>
+        </>
+    )
+}
+
+const MenuContainer = styled.div`
+position: absolute;
+display: ${props=> (props.$menuOpened ? 'block' : 'none')};
+z-index: 100;
+top: 11%;
+${'' /* top: 38px; */}
+right: 1rem;
+border-radius: 10px;
+width: 70%;
+background: #7a1cacb3;
+overflow: hidden;
+transition: height 0.5s;
+
+& a{
+    text-decoration: none;
+}
+
+& .menu-item{
+    text-wrap: nowrap;
+    overflow: hidden;
+    color: #D1E9F6;
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 10px;
+    background: #2E073F;
+    cursor: pointer;
+
+    &:hover{
+        background: #000;
+    }
+}
 
 `;
