@@ -45,6 +45,9 @@ const Chat = () => {
         console.log(socket.current.id);
       });
 
+      // socket.current.on("disconnect", ()=>{
+
+      // })
       // socket.current.on("new-user-connected", (user)=>{
       //   setChats([...chats, user]);
       // })
