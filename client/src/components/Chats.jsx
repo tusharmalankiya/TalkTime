@@ -1,35 +1,40 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
 import logo from "./../assets/logo.png";
-import Logout from './Logout';
 import { host, logoutAPI } from '../utils/APIs';
 import { Link, useNavigate } from 'react-router-dom';
 import { BsThreeDotsVertical } from "react-icons/bs";
 import axios from 'axios';
+import CreateChatRoom from './CreateChatRoom';
 
 
 
-const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, changeChat, currentUser }) => {
+const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, handleChatChange, currentUser }) => {
     const [currentSelected, setCurrentSelected] = useState(undefined);
     const [menuOpened, setMenuOpened] = useState(false);
+    const [isCreateChatRoom, setIsCreateChatRoom] = useState(false);
 
 
     const handleCurrentChat = (chat) => {
         setCurrentSelected(chat);
-        changeChat(chat);
+        handleChatChange(chat);
         setIsMsgsOpened(!isMsgsOpened);
+        setMenuOpened(false);
     }
 
-    const handleMenu = () =>{
-        console.log("Menu");
-        console.log(menuOpened);
+    const handleMenu = () => {
         setMenuOpened(!menuOpened);
-      }
+    }
+
+    const ChangeCreateChatRoom = () => {
+        setIsCreateChatRoom(!isCreateChatRoom);
+    }
 
     return (
         <>
-            <Container $isOpened={!isMsgsOpened}>
-                <Menu currentUser={currentUser} socket={socket} menuOpened={menuOpened} handleMenu={handleMenu} />
+            <Container $isOpened={!isMsgsOpened} >
+                <CreateChatRoom isCreateChatRoom={isCreateChatRoom} ChangeCreateChatRoom={ChangeCreateChatRoom} />
+                <Menu currentUser={currentUser} socket={socket} menuOpened={menuOpened} handleMenu={handleMenu} ChangeCreateChatRoom={ChangeCreateChatRoom} />
                 <div className='chats-header'>
                     <div className='logo-container'>
                         <img src={logo} alt="logo" />
@@ -49,7 +54,7 @@ const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, changeChat, curre
                     })}
 
                 </div>
-                <div className='current-user'>
+                {/* <div className='current-user'>
                     <div className='current-user-profile'>
                         <Link to='/set-profile'>
                             <img src={`${host}/${currentUser?.avatar}`} alt="profile-image" />
@@ -57,7 +62,7 @@ const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, changeChat, curre
                         <h1>{currentUser?.username}</h1>
                     </div>
                     <Logout socket={socket} currentUser={currentUser} />
-                </div>
+                </div> */}
             </Container>
         </>
     )
@@ -77,6 +82,7 @@ width: 100%;
 max-width: 400px;
 padding-bottom: 1rem;
 position: relative;
+z-index: 1;
 
 & .chats-header{
     display: flex;
@@ -98,7 +104,7 @@ position: relative;
 }
 }
 
-.current-user{
+${'' /* .current-user{
     display: none;
     justify-content: space-between;
     align-items: center;
@@ -121,7 +127,7 @@ position: relative;
     font-size: 25px;
    }
     }
-}
+} */}
 
 .all-chats-container{
     ${'' /* position: relative; */}
@@ -198,36 +204,37 @@ svg{
 }
 `;
 
-const Menu = ({currentUser, socket, menuOpened}) =>{
+const Menu = ({ currentUser, socket, menuOpened, ChangeCreateChatRoom, handleMenu }) => {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
         console.log("logout");
         try {
-          const res = await axios.get(`${logoutAPI}/${currentUser?._id}`);
-          console.log(res);
-          socket.current.emit("logout");
-          localStorage.clear();
-          navigate('/login');
+            const res = await axios.get(`${logoutAPI}/${currentUser?._id}`);
+            console.log(res);
+            socket.current.emit("logout");
+            localStorage.clear();
+            navigate('/login');
         } catch (err) {
-          console.log(err);
+            console.log(err);
         }
-      }
+    }
 
- 
+
 
     return (
         <>
             <MenuContainer $menuOpened={menuOpened}>
-            {console.log(menuOpened)}
-            <Link to="/set-profile">
-                <div className='menu-item'>
-                    Profile
-                </div>
-            </Link>
-                <div className='menu-item'>
+                <Link to="/set-profile">
+                    <div className='menu-item'>
+                        Profile
+                    </div>
+                </Link>
+                {/* <Link to="/create-chatroom"> */}
+                <div className='menu-item' onClick={() => { ChangeCreateChatRoom(); handleMenu(); }}>
                     Create Chat Room
                 </div>
+                {/* </Link> */}
                 <div className='menu-item' onClick={handleLogout}>
                     Logout
                 </div>
@@ -238,7 +245,7 @@ const Menu = ({currentUser, socket, menuOpened}) =>{
 
 const MenuContainer = styled.div`
 position: absolute;
-display: ${props=> (props.$menuOpened ? 'block' : 'none')};
+display: ${props => (props.$menuOpened ? 'block' : 'none')};
 z-index: 100;
 top: 11%;
 ${'' /* top: 38px; */}

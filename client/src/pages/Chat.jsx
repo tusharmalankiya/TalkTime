@@ -40,7 +40,7 @@ const Chat = () => {
 
   useEffect(()=>{
     if(currentUser){
-      socket.current = io(host);
+     socket.current = io(host);
       socket.current.on("connect", ()=>{
         console.log(socket.current.id);
       });
@@ -77,7 +77,7 @@ const Chat = () => {
     <>
       <Container>
         <div className='chat-container'>
-          <Chats socket={socket} chats={chats} isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} changeChat={handleChatChange} currentUser={currentUser} />
+          <Chats socket={socket} chats={chats} isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} handleChatChange={handleChatChange} currentUser={currentUser} />
           {(currentChat === undefined) ?
             <Welcome /> :
             <Messages isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} currentChat={currentChat} socket={socket} />}
