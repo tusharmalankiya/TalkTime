@@ -6,7 +6,6 @@ const chatroomSchema = new mongoose.Schema(
         type: String,
         required: [true, "please enter name of chatroom"],
         unique: true,
-        lowercase: true,
         maxLength: [20, "username should not be more than 20 characters"],
       },
       members: {

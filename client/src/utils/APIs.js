@@ -7,3 +7,4 @@ export const saveMessagesAPI = `${host}/api/auth/save-messages`;
 export const getMessagesAPI = `${host}/api/auth/get-messages`;
 export const setProfileAPI = `${host}/api/auth/set-profile`;
 export const createChatRoomAPI = `${host}/api/auth/create-chatroom`;
+export const getChatRoomsAPI = `${host}/api/auth/get-chatrooms`;

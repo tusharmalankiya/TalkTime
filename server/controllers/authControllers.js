@@ -89,6 +89,7 @@ module.exports.create_chatroom = async (req, res)=>{
 
         const isChatRoom = await ChatRoom.findOne({name});
         if(isChatRoom){
+            deleteFile(avatar);
             return res.json({status: false, message:"Name already exists"});
         }
         const chatRoom = await ChatRoom.create({name, members, avatar});
@@ -98,5 +99,15 @@ module.exports.create_chatroom = async (req, res)=>{
     }catch(err){
         console.log(err);
         res.status(500).json({status: false, message: err.message});
+    }
+}
+
+module.exports.get_chatrooms = async (req, res) =>{
+    const userId = req.query.userId;
+    try{
+        const chatRooms = await ChatRoom.find({members: {$elemMatch: {_id: userId}}});
+        res.json({status: true, chatRooms});
+    }catch(err){
+        console.log(err);
     }
 }

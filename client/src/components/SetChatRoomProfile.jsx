@@ -7,7 +7,7 @@ import Loader from './Loader';
 import { useNavigate } from 'react-router-dom';
 import { createChatRoomAPI } from '../utils/APIs';
 
-const SetChatRoomProfile = ({ selectedMembers, isSetChatRoomProfile, handleChangeChatRoom }) => {
+const SetChatRoomProfile = ({ selectedMembers, setSelectedMembers, isSetChatRoomProfile, handleChangeChatRoom }) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [profileImages, setProfileImages] = useState([]);
@@ -80,7 +80,7 @@ const SetChatRoomProfile = ({ selectedMembers, isSetChatRoomProfile, handleChang
 
             } else {
                 toast.error(res.data.message, toastConfig);
-                console.log(res.data.message);
+                // console.log(res.data.message);
             }
         } catch (err) {
             setLoading(false);
@@ -89,15 +89,18 @@ const SetChatRoomProfile = ({ selectedMembers, isSetChatRoomProfile, handleChang
         }
     }
 
-
-
-    // if (loading) return <Container $isSetChatRoomProfile={isSetChatRoomProfile}><Loader /></Container>;
+    const handleBackBtn = () =>{
+        setSelectedMembers([]);
+        handleChangeChatRoom();
+    }
 
 
     return (
         <Container $isSetChatRoomProfile={isSetChatRoomProfile}>
             {loading ? <Loader /> : <>
-                <div onClick={handleChangeChatRoom}>SetChatRoomProfile</div>
+            <div className='back-btn-container' onClick={handleBackBtn}>
+                <div className='back-btn'>Back</div>
+            </div>
                 <div className='avatars-imgs-container'>
                     {profileImages.map((file, index) => {
                         return (
@@ -120,9 +123,7 @@ const SetChatRoomProfile = ({ selectedMembers, isSetChatRoomProfile, handleChang
 export default SetChatRoomProfile;
 
 const Container = styled.div`
-${'' /* display: none; */}
 background-color: #080705;
-${'' /* background-color: grey; */}
 overflow: hidden;
 color: #EEEDEB;
 height: 100%;
@@ -131,13 +132,28 @@ z-index: 100;
 position: absolute;
 top:0;
 right:0;
-transition: width 0.5s;
+transition: width 0.3s;
 padding-bottom: 1rem;
 padding: 0 ${props => props.$isSetChatRoomProfile ? '1rem' : '0'};
 box-sizing: border-box;
 visibility: visible;
 wordwrap: nowrap;
 white-space: nowrap;
+
+& .back-btn-container{
+    display: flex;
+    justify-content: flex-end;
+    margin: 1rem 0;
+    cursor: pointer;
+
+    & .back-btn{
+        background: #B43F3F;
+        border-radius: 5px;
+        padding: 1rem;
+        display: inline-block;
+    }
+
+}
 
 & .avatars-imgs-container{
   display: flex;

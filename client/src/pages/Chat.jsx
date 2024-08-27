@@ -7,6 +7,7 @@ import Messages from '../components/Messages';
 import { allChatsAPI, host } from '../utils/APIs';
 import axios from 'axios';
 import { io } from 'socket.io-client';
+import ChatRoomMessages from '../components/ChatRoomMessages';
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ const Chat = () => {
   const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
   const [chats, setChats] = useState([]);
+  const [isChatRooms, setIsChatRooms] = useState(false);
+
 
   const [isMsgsOpened, setIsMsgsOpened] = useState(false);
 
@@ -21,7 +24,7 @@ const Chat = () => {
     async function fetchData() {
       if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
         navigate("/login");
-      }else{
+      } else {
         setCurrentUser(
           await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY))
         );
@@ -30,18 +33,18 @@ const Chat = () => {
     fetchData();
   }, []);
 
-  useEffect(()=>{
-    if(currentUser && !currentUser.avatar){
+  useEffect(() => {
+    if (currentUser && !currentUser.avatar) {
       console.log("no avatar");
       navigate('/set-profile');
     }
-  },[currentUser])
+  }, [currentUser])
 
 
-  useEffect(()=>{
-    if(currentUser){
-     socket.current = io(host);
-      socket.current.on("connect", ()=>{
+  useEffect(() => {
+    if (currentUser) {
+      socket.current = io(host);
+      socket.current.on("connect", () => {
         console.log(socket.current.id);
       });
 
@@ -56,20 +59,20 @@ const Chat = () => {
     }
   }, [currentUser])
 
-  useEffect(()=>{
-      if(currentUser){
-        axios.get(`${allChatsAPI}/${currentUser._id}`)
-        .then(res =>{
-          if(res.data.status === true){
+  useEffect(() => {
+    if (currentUser) {
+      axios.get(`${allChatsAPI}/${currentUser._id}`)
+        .then(res => {
+          if (res.data.status === true) {
             setChats(res.data.usersData);
           }
-        }).catch(err=>{
+        }).catch(err => {
           console.log(err);
         })
-      }
+    }
   }, [currentUser, currentChat])
 
-  const handleChatChange = (chat) =>{
+  const handleChatChange = (chat) => {
     setCurrentChat(chat);
   }
 
@@ -77,11 +80,16 @@ const Chat = () => {
     <>
       <Container>
         <div className='chat-container'>
-          <Chats socket={socket} chats={chats} isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} handleChatChange={handleChatChange} currentUser={currentUser} />
+          <Chats socket={socket} chats={chats} 
+          isMsgsOpened={isMsgsOpened} 
+          setIsMsgsOpened={setIsMsgsOpened} 
+          handleChatChange={handleChatChange} 
+          currentUser={currentUser} 
+          isChatRooms={isChatRooms} 
+          setIsChatRooms={setIsChatRooms} />
           {(currentChat === undefined) ?
             <Welcome /> :
-            <Messages isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} currentChat={currentChat} socket={socket} />}
-            
+            (isChatRooms ?  <ChatRoomMessages /> :<Messages isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} currentChat={currentChat} socket={socket} /> )}
         </div>
       </Container>
     </>

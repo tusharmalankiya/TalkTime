@@ -1,16 +1,54 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import logo from "./../assets/logo.png";
-import { host, logoutAPI } from '../utils/APIs';
+import { getChatRoomsAPI, host, logoutAPI } from '../utils/APIs';
 import { Link, useNavigate } from 'react-router-dom';
 import { BsThreeDotsVertical } from "react-icons/bs";
 import axios from 'axios';
 import CreateChatRoom from './CreateChatRoom';
 import SetChatRoomProfile from './SetChatRoomProfile';
+import Loader from './Loader';
 
 
+const ChatRooms = ({currentUser}) => {
+    const [chatRooms, setChatRooms] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, handleChatChange, currentUser }) => {
+    useEffect(()=>{
+        if(currentUser){
+            axios.get(getChatRoomsAPI, {
+                params: {
+                    userId: currentUser._id
+                }
+            }).then(res=>{
+                setLoading(false);
+                console.log(res.data);
+                if(res.data.status === true){
+                    setChatRooms(res.data.chatRooms);
+                }
+            }).catch(err=>{
+                console.log(err);
+            })
+        }
+    }, [currentUser])
+
+    return (<>
+        {loading ? <Loader /> : 
+        <div className='all-chats-container'>
+            {chatRooms.map((chatRoom) => {
+
+                return (<div className={`chat`} key={chatRoom._id} onClick={()=>console.log(chatRoom)}>
+                    <img src={`${host}/${chatRoom.avatar}`} alt={`${chatRoom.name}-profile-image`} />
+                    <h3>{chatRoom.name}</h3>
+                </div>)
+            })}
+        </div>
+        }
+    </>)
+}
+
+
+const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, handleChatChange, currentUser, isChatRooms, setIsChatRooms }) => {
     const [currentSelected, setCurrentSelected] = useState(undefined);
     const [menuOpened, setMenuOpened] = useState(false);
     const [isCreateChatRoom, setIsCreateChatRoom] = useState(false);
@@ -40,15 +78,15 @@ const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, handleChatChange,
     return (
         <>
             <Container $isOpened={!isMsgsOpened} >
-                <CreateChatRoom 
+                <CreateChatRoom
                     selectedMembers={selectedMembers}
                     setSelectedMembers={setSelectedMembers}
                     chats={chats}
                     isCreateChatRoom={isCreateChatRoom}
-                    ChangeCreateChatRoom={ChangeCreateChatRoom} 
+                    ChangeCreateChatRoom={ChangeCreateChatRoom}
                     handleChangeChatRoom={handleChangeChatRoom} />
-                {isSetChatRoomProfile && <SetChatRoomProfile selectedMembers={selectedMembers} isSetChatRoomProfile={isSetChatRoomProfile} handleChangeChatRoom={handleChangeChatRoom} />}
-                <Menu currentUser={currentUser} socket={socket} menuOpened={menuOpened} handleMenu={handleMenu} ChangeCreateChatRoom={ChangeCreateChatRoom} />
+                {isSetChatRoomProfile && <SetChatRoomProfile selectedMembers={selectedMembers} setSelectedMembers={setSelectedMembers} isSetChatRoomProfile={isSetChatRoomProfile} handleChangeChatRoom={handleChangeChatRoom} />}
+                <Menu setIsChatRooms={setIsChatRooms} currentUser={currentUser} socket={socket} menuOpened={menuOpened} handleMenu={handleMenu} ChangeCreateChatRoom={ChangeCreateChatRoom} />
                 <div className='chats-header'>
                     <div className='logo-container'>
                         <img src={logo} alt="logo" />
@@ -58,25 +96,17 @@ const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, handleChatChange,
                         <BsThreeDotsVertical />
                     </MenuIconContainer>
                 </div>
-                <div className='all-chats-container'>
+                {isChatRooms && <ChatRooms currentUser={currentUser} />}
+               {!isChatRooms && <div className='all-chats-container'>
                     {chats.map((chat, index) => {
 
                         return (<div className={`chat ${currentSelected?._id === chat._id && "selected"}`} key={index} onClick={() => handleCurrentChat(chat)} >
-                            <img src={`${host}/${chat.avatar}`} alt="user-profile-image" />
+                            <img src={`${host}/${chat.avatar}`} alt={`${chat.username}-profile-image`} />
                             <h3>{chat.username}</h3>
                         </div>)
                     })}
 
-                </div>
-                {/* <div className='current-user'>
-                    <div className='current-user-profile'>
-                        <Link to='/set-profile'>
-                            <img src={`${host}/${currentUser?.avatar}`} alt="profile-image" />
-                        </Link>
-                        <h1>{currentUser?.username}</h1>
-                    </div>
-                    <Logout socket={socket} currentUser={currentUser} />
-                </div> */}
+                </div>}
             </Container>
         </>
     )
@@ -118,34 +148,11 @@ z-index: 1;
 }
 }
 
-${'' /* .current-user{
-    display: none;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-   background-color: #1E201E;
-
-    .current-user-profile{
-    display: flex;
-   justify-content: center;
-   align-items: center;
-   gap: 1rem;
-
-   img{
-    height: 5rem;
-    width: 5rem;
-    border-radius: 10rem;
-    background: #F8EDED;
-   }
-   h1{
-    font-size: 25px;
-   }
-    }
-} */}
 
 .all-chats-container{
     ${'' /* position: relative; */}
     overflow-x: hidden; 
+    display: block;
     height: 100%;
     cursor: pointer;
         /* width */
@@ -207,7 +214,6 @@ ${'' /* .current-user{
 
 
 const MenuIconContainer = styled.div`
-${'' /* background: red; */}
 padding: 5px 0;
 padding-left: 1rem;
 cursor: pointer;
@@ -218,7 +224,7 @@ svg{
 }
 `;
 
-const Menu = ({ currentUser, socket, menuOpened, ChangeCreateChatRoom, handleMenu }) => {
+const Menu = ({ setIsChatRooms, currentUser, socket, menuOpened, ChangeCreateChatRoom, handleMenu }) => {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -244,11 +250,15 @@ const Menu = ({ currentUser, socket, menuOpened, ChangeCreateChatRoom, handleMen
                         Profile
                     </div>
                 </Link>
-                {/* <Link to="/create-chatroom"> */}
+                <div className='menu-item' onClick={() => { setIsChatRooms(false); handleMenu(); }}>
+                    Chats
+                </div>
+                <div className='menu-item' onClick={() => { setIsChatRooms(true); handleMenu(); }}>
+                    Chat Rooms
+                </div>
                 <div className='menu-item' onClick={() => { ChangeCreateChatRoom(); handleMenu(); }}>
                     Create Chat Room
                 </div>
-                {/* </Link> */}
                 <div className='menu-item' onClick={handleLogout}>
                     Logout
                 </div>

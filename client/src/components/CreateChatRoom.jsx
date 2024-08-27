@@ -49,7 +49,7 @@ const CreateChatRoom = ({ selectedMembers, setSelectedMembers, chats, isCreateCh
     }
 
     const handleNext = () => {
-        if(selectedMembers.length < 2){
+        if(selectedMembers.length < 3){
             return toast.error("Not sufficient members", toastConfig);
         }
         setInput("");
@@ -66,7 +66,7 @@ const CreateChatRoom = ({ selectedMembers, setSelectedMembers, chats, isCreateCh
         <Container $isCreateChatRoom={isCreateChatRoom}>
             <div className='header'>
                 <h3>Add group members</h3>
-                <IoClose onClick={ChangeCreateChatRoom} />
+                <IoClose onClick={()=>{setSelectedMembers([]); ChangeCreateChatRoom();}} />
             </div>
 
 
@@ -117,13 +117,14 @@ z-index: 100;
 position: absolute;
 top:0;
 left:0;
-transition: width 0.5s;
+transition: width 0.3s;
 padding-bottom: 1rem;
 padding: 0 ${props => props.$isCreateChatRoom ? '1rem' : '0'};
 box-sizing: border-box;
 visibility: visible;
 wordwrap: nowrap;
 white-space: nowrap;
+
 
 
 & .header{
@@ -145,12 +146,25 @@ height: 10%;
     display: flex;
     flex-wrap: wrap;
 
+         /* width */
+         &::-webkit-scrollbar {
+    width: 3px;
+
+    /* Handle */
+    &-thumb {
+    background: #888; 
+    border-radius: 1rem;
+    }
+    }
+
 
     & .selected-member{
         display: flex;
         align-items: center;
         margin:0.7rem;
         gap: 0.5rem;
+
+        
 
         img{
             background: #F8EDED;
@@ -189,6 +203,16 @@ height: 10%;
 & .chats{
     overflow-y: auto;
     height: 50%;
+         /* width */
+    &::-webkit-scrollbar {
+    width: 5px;
+
+    /* Handle */
+    &-thumb {
+    background: #888; 
+    border-radius: 1rem;
+    }
+    }
 
     & .member{
         border-bottom:1px solid #3C3D37;
@@ -196,6 +220,11 @@ height: 10%;
         display: flex;
         align-items: center;
         gap: 1rem;
+        cursor: pointer;
+
+        &:active{
+            background: grey;
+        }
 
         & img{
             background: #F8EDED;
@@ -222,6 +251,11 @@ height: 10%;
     height: 6%;
     border-radius: 6px;
     margin: 1rem auto;
+    cursor: pointer;
+
+    &:hover{
+        opacity: 0.7;
+    }
 }
 
 `;

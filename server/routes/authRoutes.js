@@ -13,6 +13,7 @@ const authController = require("./../controllers/authControllers");
 // get
 router.get("/get-chats/:id", authController.get_chats);
 router.post("/get-messages", authController.get_messages);
+router.get("/get-chatrooms", authController.get_chatrooms);
 // post
 router.post("/save-messages", authController.save_messages);
 router.post("/set-profile", upload.single('avatar'), authController.set_profile);

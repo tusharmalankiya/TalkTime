@@ -5,7 +5,6 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import SetProfile from './pages/SetProfile';
 import Chat from './pages/Chat';
-import CreateChatRoom from './components/CreateChatRoom';
 
 function App() {
   return (
@@ -15,7 +14,6 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/set-profile" element={<SetProfile />} />
-        <Route path="/create-chatroom" element={<CreateChatRoom />} />
       </Routes>
     </BrowserRouter>
   );
