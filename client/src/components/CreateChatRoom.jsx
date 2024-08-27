@@ -1,51 +1,106 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components';
 
 import { IoClose } from "react-icons/io5";
+import { host } from '../utils/APIs';
+import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { toastConfig } from '../utils/toast';
 
-const CreateChatRoom = ({ isCreateChatRoom, ChangeCreateChatRoom }) => {
+const CreateChatRoom = ({ selectedMembers, setSelectedMembers, chats, isCreateChatRoom, ChangeCreateChatRoom, handleChangeChatRoom }) => {
     const LastSelectedMember = useRef();
+    const navigate = useNavigate();
+    const [input, setInput] = useState("");
+    const [members, setMembers] = useState(chats);
+    const [currentUser, setCurrentUser] = useState(undefined);
 
     useEffect(() => {
-        LastSelectedMember.current.scrollIntoView();
-    }, [])
-
+        async function fetchData() {
+          if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+            navigate("/login");
+          }else{
+            setCurrentUser(
+              await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY))
+            );
+          }
+        }
+        fetchData();
+      }, []);
     
+
+    useEffect(() => {
+        setMembers(chats);
+    }, [chats])
+
+    useEffect(() => {
+        LastSelectedMember.current?.scrollIntoView();
+    }, [selectedMembers])
+
+
+    const handleSelectMember = (member) => {
+        setMembers(prev => prev.filter((i)=> i !== member));
+        setSelectedMembers([...selectedMembers, member]);
+        setInput("");
+    }
+
+    const removeSelected = (member) =>{
+        setSelectedMembers(prev=>prev.filter(i => i !== member));
+        setMembers([...members, member]);
+    }
+
+    const handleNext = () => {
+        if(selectedMembers.length < 2){
+            return toast.error("Not sufficient members", toastConfig);
+        }
+        setInput("");
+        setSelectedMembers([...selectedMembers, currentUser]);
+        ChangeCreateChatRoom(); 
+        handleChangeChatRoom();
+    }
+
+    const Members = members.filter(member =>
+        member.username.toLowerCase().includes(input.toLowerCase())
+    );
+
     return (
         <Container $isCreateChatRoom={isCreateChatRoom}>
             <div className='header'>
                 <h3>Add group members</h3>
-
                 <IoClose onClick={ChangeCreateChatRoom} />
-
             </div>
 
 
             <div className='search-bar'>
+                {selectedMembers.map((member, index) => {
+                    return (
+                        <div ref={LastSelectedMember} key={index} className='selected-member'>
+                            <img src={`${host}/${member.avatar}`} alt={`${member.username}-profile-image`} />
+                            <span>{member.username}</span>
+                            <IoClose onClick={()=>removeSelected(member)} />
+                        </div>)
+                })}
 
-               
-                <div ref={LastSelectedMember} className='selected-member'>
-                    <img src="" alt="profile" />
-                    <span>tushar</span>
-                    <IoClose onClick={ChangeCreateChatRoom} />
-                </div>
-                
-
-
-                <input />
+                <input placeholder='Enter username'
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                />
             </div>
 
             <div className='chats'>
-                <div className='member'>
-                    <img src="/" />
-                    <span>Tushar Malankiya</span>
-                </div>
-                
+                {Members.map((member, index) => {
+                    return (
+                        <div className='member' key={index} onClick={() => handleSelectMember(member)}>
+                            <img src={`${host}/${member.avatar}`} alt={`${member.username}-profile-image`} />
+                            <span>{member.username}</span>
+                        </div>
+                    )
+                })}
             </div>
 
-            <div className='create-chatroom-btn'>
-                Create
+            <div className='next-chatroom-btn' onClick={handleNext}>
+                Next
             </div>
+            <ToastContainer />
         </Container>
     )
 }
@@ -66,11 +121,13 @@ transition: width 0.5s;
 padding-bottom: 1rem;
 padding: 0 ${props => props.$isCreateChatRoom ? '1rem' : '0'};
 box-sizing: border-box;
+visibility: visible;
 wordwrap: nowrap;
+white-space: nowrap;
+
 
 & .header{
 display: flex;
-white-space:nowrap;
 align-items: center;
 justify-content: space-around;
 height: 10%;
@@ -96,10 +153,10 @@ height: 10%;
         gap: 0.5rem;
 
         img{
+            background: #F8EDED;
             height: 2rem;
             width: 2rem;
             border-radius: 4rem;
-            border:1px solid blue;
         }
 
         & svg{
@@ -133,7 +190,6 @@ height: 10%;
     overflow-y: auto;
     height: 50%;
 
-
     & .member{
         border-bottom:1px solid #3C3D37;
         padding: 0.5rem;
@@ -142,15 +198,20 @@ height: 10%;
         gap: 1rem;
 
         & img{
-            border:1px solid red;
+            background: #F8EDED;
             height: 3rem;
             width: 3rem;
             border-radius: 10rem;
         }
+
+        & span{
+            
+
+        }
     }
 }
 
-& .create-chatroom-btn{
+& .next-chatroom-btn{
     height: 10%;
     background: #379777;
     display: flex;

@@ -9,6 +9,14 @@ const chatroomSchema = new mongoose.Schema(
         lowercase: true,
         maxLength: [20, "username should not be more than 20 characters"],
       },
+      members: {
+        type: Array,
+        required: [true, "please select members"],
+      },
+      avatar:{
+        type: String,
+        require: [true, "please select avatar"]
+      }
     },
     { timestamps: true }
   );

@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { BsThreeDotsVertical } from "react-icons/bs";
 import axios from 'axios';
 import CreateChatRoom from './CreateChatRoom';
+import SetChatRoomProfile from './SetChatRoomProfile';
 
 
 
@@ -13,6 +14,8 @@ const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, handleChatChange,
     const [currentSelected, setCurrentSelected] = useState(undefined);
     const [menuOpened, setMenuOpened] = useState(false);
     const [isCreateChatRoom, setIsCreateChatRoom] = useState(false);
+    const [isSetChatRoomProfile, setIsSetChatRoomProfile] = useState(false);
+    const [selectedMembers, setSelectedMembers] = useState([]);
 
 
     const handleCurrentChat = (chat) => {
@@ -30,10 +33,21 @@ const Chats = ({ socket, chats, isMsgsOpened, setIsMsgsOpened, handleChatChange,
         setIsCreateChatRoom(!isCreateChatRoom);
     }
 
+    const handleChangeChatRoom = () => {
+        setIsSetChatRoomProfile(!isSetChatRoomProfile);
+    }
+
     return (
         <>
             <Container $isOpened={!isMsgsOpened} >
-                <CreateChatRoom isCreateChatRoom={isCreateChatRoom} ChangeCreateChatRoom={ChangeCreateChatRoom} />
+                <CreateChatRoom 
+                    selectedMembers={selectedMembers}
+                    setSelectedMembers={setSelectedMembers}
+                    chats={chats}
+                    isCreateChatRoom={isCreateChatRoom}
+                    ChangeCreateChatRoom={ChangeCreateChatRoom} 
+                    handleChangeChatRoom={handleChangeChatRoom} />
+                {isSetChatRoomProfile && <SetChatRoomProfile selectedMembers={selectedMembers} isSetChatRoomProfile={isSetChatRoomProfile} handleChangeChatRoom={handleChangeChatRoom} />}
                 <Menu currentUser={currentUser} socket={socket} menuOpened={menuOpened} handleMenu={handleMenu} ChangeCreateChatRoom={ChangeCreateChatRoom} />
                 <div className='chats-header'>
                     <div className='logo-container'>

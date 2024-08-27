@@ -16,5 +16,9 @@ router.post("/get-messages", authController.get_messages);
 // post
 router.post("/save-messages", authController.save_messages);
 router.post("/set-profile", upload.single('avatar'), authController.set_profile);
+router.post("/create-chatroom", upload.single('room-avatar'), authController.create_chatroom);
+
+
+// router.post()
 
 module.exports = router;

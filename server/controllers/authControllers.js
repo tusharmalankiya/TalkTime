@@ -1,5 +1,6 @@
 const User = require("./../models/User");
 const Message = require("./../models/Message");
+const ChatRoom = require("../models/ChatRoom");
 const fs = require('fs').promises;
 
 async function deleteFile(path) {
@@ -73,8 +74,29 @@ module.exports.set_profile = async (req, res) => {
             res.json({ status: true, avatar, message: "profile set up sucessfully" });
         } catch (err) {
             console.log(err);
-            res.json({ status: false, message: "profile set up failed" });
+            res.status(500).json({ status: false, message: "profile set up failed" });
         }
 
+    }
+}
+
+
+module.exports.create_chatroom = async (req, res)=>{
+    try{
+        const name = req.body.chatRoomName;
+        const members = await JSON.parse(req.body.members);
+        const avatar = req.file.path;
+
+        const isChatRoom = await ChatRoom.findOne({name});
+        if(isChatRoom){
+            return res.json({status: false, message:"Name already exists"});
+        }
+        const chatRoom = await ChatRoom.create({name, members, avatar});
+        console.log(chatRoom);
+        
+        res.json({status: true, chatRoom});
+    }catch(err){
+        console.log(err);
+        res.status(500).json({status: false, message: err.message});
     }
 }
