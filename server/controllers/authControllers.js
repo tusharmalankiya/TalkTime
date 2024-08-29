@@ -2,6 +2,7 @@ const User = require("./../models/User");
 const Message = require("./../models/Message");
 const ChatRoom = require("../models/ChatRoom");
 const fs = require('fs').promises;
+const mongoose = require("mongoose");
 
 async function deleteFile(path) {
     try {
@@ -41,7 +42,7 @@ module.exports.save_messages = async (req, res) => {
 
 module.exports.get_messages = async (req, res) => {
     console.log(req.body);
-    const { from, to } = req.body;
+    const { from, to } = req.query;
     try {
         const msgs = await Message.find({
             $or: [
@@ -107,6 +108,38 @@ module.exports.get_chatrooms = async (req, res) =>{
     try{
         const chatRooms = await ChatRoom.find({members: {$elemMatch: {_id: userId}}});
         res.json({status: true, chatRooms});
+    }catch(err){
+        console.log(err);
+    }
+}
+
+module.exports.get_chatroom_messages = async (req, res) =>{
+    const to = req.query.to;
+    try{
+        // const messages = await Message.find({to});
+        const objectId = new mongoose.Types.ObjectId(to);
+        const messages = await Message.aggregate([
+            {
+              $match: {to: objectId }
+            },
+            {
+              $lookup: {
+                from: 'users', // The name of the collection you're joining with
+                localField: 'from', // The field from the `messages` collection
+                foreignField: '_id', // The field from the `users` collection
+                as: 'fromUserData' // The field name in the result where user data will be stored
+              }
+            },
+            {
+              $unwind: '$fromUserData' // Unwind the array if you want a flat structure
+            },
+            {
+              $project: {
+                'fromUserData.password': 0 // Exclude the password field from the fromUserData
+              }
+            }
+          ]).exec();
+        res.json({status: true, messages});
     }catch(err){
         console.log(err);
     }

@@ -49,7 +49,7 @@ const CreateChatRoom = ({ selectedMembers, setSelectedMembers, chats, isCreateCh
     }
 
     const handleNext = () => {
-        if(selectedMembers.length < 3){
+        if(selectedMembers.length < 2){
             return toast.error("Not sufficient members", toastConfig);
         }
         setInput("");

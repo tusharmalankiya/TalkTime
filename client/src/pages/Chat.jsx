@@ -7,7 +7,6 @@ import Messages from '../components/Messages';
 import { allChatsAPI, host } from '../utils/APIs';
 import axios from 'axios';
 import { io } from 'socket.io-client';
-import ChatRoomMessages from '../components/ChatRoomMessages';
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -89,7 +88,7 @@ const Chat = () => {
           setIsChatRooms={setIsChatRooms} />
           {(currentChat === undefined) ?
             <Welcome /> :
-            (isChatRooms ?  <ChatRoomMessages /> :<Messages isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} currentChat={currentChat} socket={socket} /> )}
+            <Messages isChatRooms={isChatRooms} isMsgsOpened={isMsgsOpened} setIsMsgsOpened={setIsMsgsOpened} currentChat={currentChat} socket={socket} />}
         </div>
       </Container>
     </>

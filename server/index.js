@@ -13,6 +13,7 @@ const { Server } = require("socket.io");
 //imports of files
 const commonRoutes = require("./routes/commonRoutes");
 const authRoutes = require("./routes/authRoutes");
+const { SocketAddress } = require("net");
 //-------------------------------------------------------
 
 //for environment variables-------------
@@ -100,6 +101,17 @@ io.on("connection", (socket)=>{
     if(sendSocket){
       socket.to(sendSocket).emit("msg_receive", data);
     }
+  })
+
+  socket.on("joinRoom", (roomId) =>{
+    console.log(`Room Joined : ${roomId}`);
+    socket.join(roomId);
+  })
+
+  socket.on("roomMessage", (msg, roomId)=>{
+    console.log(msg);
+    console.log(roomId);
+    io.to(roomId).emit("roomMessageReceive", msg);
   })
 
   socket.on("logout", ()=>{
