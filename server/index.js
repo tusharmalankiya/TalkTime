@@ -22,6 +22,15 @@ require("dotenv").config();
 app = express();
 const httpServer = http.createServer(app);
 
+//CORS middleware
+app.use(
+  cors({
+    origin: process.env.BASE_URL,
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
+
 // cors for socket.io 
 const io = new Server(httpServer, {
   cors: {
@@ -33,14 +42,6 @@ const io = new Server(httpServer, {
 
 
 //***************************middlewares******************* */
-//CORS middleware
-app.use(
-  cors({
-    origin: process.env.BASE_URL,
-    credentials: true,
-    optionsSuccessStatus: 200,
-  })
-);
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
