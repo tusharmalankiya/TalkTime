@@ -211,7 +211,7 @@ gap: 1rem;
         display: flex;
 
         & .message-body{
-        max-width: 40%;
+        max-width: 65%;
         background-color:#2E073F;
         border-radius: 0.5rem;
         padding: 1rem;
