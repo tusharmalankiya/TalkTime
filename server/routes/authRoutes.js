@@ -3,7 +3,10 @@ const router = express.Router();
 
 
 const multer = require("multer");
-const upload = multer({dest:"./assets/avatars"});
+// Multer setup (store in memory, not in disk)
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+// const upload = multer({dest:"./assets/avatars"});
 //middleware
 // const { auth } = require("./../middlewares/auth");
 

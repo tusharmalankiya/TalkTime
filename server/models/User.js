@@ -27,9 +27,14 @@ const userSchema = new mongoose.Schema(
             validate: [isEmail, "please enter a valid email address"],
         },
 
+        // avatar: {
+        //     type: String,
+        //     default: null
+        // },
+
         avatar: {
-            type: String,
-            default: null
+            data: Buffer,
+            contentType: String,
         },
 
         socket: {
