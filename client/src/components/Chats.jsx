@@ -50,7 +50,7 @@ const ChatRooms = ({socket, menuOpened, setMenuOpened, currentUser, isMsgsOpened
             {chatRooms.map((chatRoom) => {
 
                 return (<div className={`chat ${currentSelectedChatRoom?._id === chatRoom._id && 'selected'}`} key={chatRoom._id} onClick={()=>handleCurrentChatRoom(chatRoom)}>
-                    <img src={`data:${chatRoom.avatar.contentType};base64,${chatRoom.avatar.data}`} alt={`${chatRoom.name}-profile-image`} />
+                    <img src={`data:${chatRoom.avatar.contentType};base64,${chatRoom.avatar.data}`} alt={`${chatRoom.name}-sjsdprofile-image`} />
                     <h3>{chatRoom.name}</h3>
                 </div>)
             })}

@@ -121,7 +121,7 @@ const Messages = ({ isChatRooms, currentChat, isMsgsOpened, setIsMsgsOpened, soc
         <Container $isOpened={isMsgsOpened}>
             <div className='messages-header'>
                 <div className='messages-header-container'>
-                    <img src={`data:${currentChat.avatar.contentType};base64,${currentChat.avatar.data}`} alt={`${currentChat.username}-profile-image`} />
+                    <img src={`data:${currentChat?.avatar.contentType};base64,${currentChat?.avatar.data}`} alt={`${currentChat?.username}-profile-image`} />
                     <h3>{isChatRooms ? currentChat?.name : currentChat?.username}</h3>
                 </div>
                 <button className='messages-back-btn' onClick={() => setIsMsgsOpened(!isMsgsOpened)}><IoMdArrowRoundBack />
