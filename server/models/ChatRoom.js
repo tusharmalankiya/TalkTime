@@ -16,10 +16,15 @@ const chatroomSchema = new mongoose.Schema(
     //   type: String,
     //   require: [true, "please select avatar"]
     // }
+    // avatar: {
+    //   data: { type: Buffer, required: [true, "please select avatar"] },
+    //   contentType: { type: String, required: [true, "please select avatar(missing mimetype)"] }
+    // },
     avatar: {
-      data: { type: Buffer, required: [true, "please select avatar"] },
-      contentType: { type: String, required: [true, "please select avatar(missing mimetype)"] }
+      data: Buffer,
+      contentType: String,
     },
+
   },
   { timestamps: true }
 );
