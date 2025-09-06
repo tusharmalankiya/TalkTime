@@ -69,7 +69,7 @@ module.exports.set_profile = async (req, res) => {
 
         try {
 
-            const user = await User.findByIdAndUpdate(userId, { avatar }, {new: true});
+            const user = await User.findByIdAndUpdate(userId, { avatar }, { new: true });
             // const userData = user.toObject();
             // delete userData.password;
             // if (user.avatar) {
@@ -117,7 +117,16 @@ module.exports.get_chatrooms = async (req, res) => {
     const userId = req.query.userId;
     try {
         const chatRooms = await ChatRoom.find({ members: { $elemMatch: { _id: userId } } });
-        res.json({ status: true, chatRooms });
+        const chatRoomsData = chatRooms.map(room => {
+            const roomData = room.toObject();
+            if (roomData.avatar?.data) {
+                roomData.avatar.data = roomData.avatar.data.toString("base64"); // convert buffer
+            }
+            return roomData;
+        });
+
+        res.json({ status: true, chatRooms: chatRoomsData });
+        // res.json({ status: true, chatRooms });
     } catch (err) {
         console.log(err);
     }
