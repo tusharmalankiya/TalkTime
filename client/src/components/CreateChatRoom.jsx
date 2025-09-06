@@ -74,7 +74,7 @@ const CreateChatRoom = ({ selectedMembers, setSelectedMembers, chats, isCreateCh
                 {selectedMembers.map((member, index) => {
                     return (
                         <div ref={LastSelectedMember} key={index} className='selected-member'>
-                            <img src={`${host}/${member.avatar}`} alt={`${member.username}-profile-image`} />
+                            <img src={`data:${member.avatar.contentType};base64,${member.avatar.data}`} alt={`${member.username}-profile-image`} />
                             <span>{member.username}</span>
                             <IoClose onClick={()=>removeSelected(member)} />
                         </div>)
@@ -90,7 +90,7 @@ const CreateChatRoom = ({ selectedMembers, setSelectedMembers, chats, isCreateCh
                 {Members.map((member, index) => {
                     return (
                         <div className='member' key={index} onClick={() => handleSelectMember(member)}>
-                            <img src={`${host}/${member.avatar}`} alt={`${member.username}-profile-image`} />
+                            <img src={`data:${member.avatar.contentType};base64,${member.avatar.data}`} alt={`${member.username}-profile-image`} />
                             <span>{member.username}</span>
                         </div>
                     )

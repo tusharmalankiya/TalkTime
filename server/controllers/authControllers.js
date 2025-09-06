@@ -100,7 +100,7 @@ module.exports.create_chatroom = async (req, res) => {
 
         const isChatRoom = await ChatRoom.findOne({ name });
         if (isChatRoom) {
-            deleteFile(avatar);
+            // deleteFile(avatar);
             return res.json({ status: false, message: "Name already exists" });
         }
         const chatRoom = await ChatRoom.create({ name, members, avatar }, {new: true});
